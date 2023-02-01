@@ -47,7 +47,7 @@ def normalize_params(url, params):
 
     # Get the query list
     qs_list = parse_qsl(parse.query, keep_blank_values=True)
-    must_encode = False if parse.query == urllib.parse.unquote(parse.query) else True
+    must_encode = parse.query != urllib.parse.unquote(parse.query)
     if params is None:
         combined_list = qs_list
     else:
@@ -55,7 +55,7 @@ def normalize_params(url, params):
         combined_list = [encode_pair(must_encode, key, value) for (key, value) in list(qs_list)]
         combined_list += params.items()
 
-    encoded_list = ["%s=%s" % (key, value) for (key, value) in combined_list]
+    encoded_list = [f"{key}={value}" for (key, value) in combined_list]
     sorted_list = sorted(encoded_list, key=lambda x: x)
 
     return "&".join(sorted_list)
@@ -85,9 +85,9 @@ def normalize_url(url):
 
     # add a '/' at the end of the netloc if there in no path
     if not parse.path:
-        netloc = netloc + "/"
+        netloc = f"{netloc}/"
 
-    return "{}://{}{}".format(parse.scheme, netloc, parse.path)
+    return f"{parse.scheme}://{netloc}{parse.path}"
 
 
 def sha256_encode(text):
@@ -134,7 +134,12 @@ def get_nonce(length=16):
     """
     characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
     charlen = len(characters)
-    return "".join([characters[SystemRandom().randint(0, charlen - 1)] for _ in range(0, length)])
+    return "".join(
+        [
+            characters[SystemRandom().randint(0, charlen - 1)]
+            for _ in range(length)
+        ]
+    )
 
 
 def get_timestamp():

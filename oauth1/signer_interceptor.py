@@ -44,18 +44,18 @@ class SignerInterceptor(object):
 
         @wraps(func)
         def request_function(*args, **kwargs):  # pragma: no cover
-            in_body = kwargs.get("body", None)
-            query_params = kwargs.get("query_params", None)
+            in_body = kwargs.get("body")
+            query_params = kwargs.get("query_params")
 
             uri = args[1]
             if query_params:
-                uri += '?' + urlencode(query_params)
+                uri += f'?{urlencode(query_params)}'
 
             auth_header = OAuth.get_authorization_header(uri, args[0], in_body, self.consumer_key, self.signing_key)
 
-            in_headers = kwargs.get("headers", None)
+            in_headers = kwargs.get("headers")
             if not in_headers:
-                in_headers = dict()
+                in_headers = {}
                 kwargs["headers"] = in_headers
 
             in_headers["Authorization"] = auth_header

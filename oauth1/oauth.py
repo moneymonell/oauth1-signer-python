@@ -40,10 +40,12 @@ class OAuth:
         # Get the updated base parameters dict
         oauth_base_parameters_dict = oauth_parameters.get_base_parameters_dict()
 
-        # Generate the header value for OAuth Header
-        oauth_key = OAuthParameters.OAUTH_KEY + " " + ",".join(
-            [str(key) + "=\"" + str(value) + "\"" for (key, value) in oauth_base_parameters_dict.items()])
-        return oauth_key
+        return f"{OAuthParameters.OAUTH_KEY} " + ",".join(
+            [
+                str(key) + "=\"" + str(value) + "\""
+                for (key, value) in oauth_base_parameters_dict.items()
+            ]
+        )
 
     @staticmethod
     def get_oauth_parameters(uri, method, payload, consumer_key, signing_key):
@@ -77,9 +79,7 @@ class OAuth:
     @staticmethod
     def get_base_string(url, method, oauth_parameters):
         merge_params = oauth_parameters.copy()
-        return "{}&{}&{}".format(method.upper(),
-                                 util.percent_encode(util.normalize_url(url)),
-                                 util.percent_encode(util.normalize_params(url, merge_params)))
+        return f"{method.upper()}&{util.percent_encode(util.normalize_url(url))}&{util.percent_encode(util.normalize_params(url, merge_params))}"
 
     @staticmethod
     def sign_message(message, signing_key):

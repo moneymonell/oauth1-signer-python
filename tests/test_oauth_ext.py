@@ -79,7 +79,9 @@ class OAuthExtTest(unittest.TestCase):
         oauth_object(OAuthExtTest.mock_prepared_request)
         h = OAuthExtTest.extract_oauth_params(OAuthExtTest.mock_prepared_request)
 
-        hashlib_val = hashlib.sha256(str(OAuthExtTest.mock_prepared_request.body).encode('utf8')).digest()
+        hashlib_val = hashlib.sha256(
+            OAuthExtTest.mock_prepared_request.body.encode('utf8')
+        ).digest()
         payload_hash_value = util.base64_encode(hashlib_val)
 
         self.assertEqual(h['oauth_body_hash'], payload_hash_value)
@@ -92,7 +94,7 @@ class OAuthExtTest(unittest.TestCase):
         oauth_object(OAuthExtTest.mock_prepared_request)
         h = OAuthExtTest.extract_oauth_params(OAuthExtTest.mock_prepared_request)
 
-        hashlib_val = hashlib.sha256(str("").encode('utf8')).digest()
+        hashlib_val = hashlib.sha256("".encode('utf8')).digest()
         payload_hash_value = util.base64_encode(hashlib_val)
 
         self.assertEqual(h['oauth_body_hash'], payload_hash_value)
@@ -118,7 +120,7 @@ class OAuthExtTest(unittest.TestCase):
         oauth_object(request_none)
         request_none_header = OAuthExtTest.extract_oauth_params(request_none)
 
-        empty_string_hash = hashlib.sha256(str("").encode('utf8')).digest()
+        empty_string_hash = hashlib.sha256("".encode('utf8')).digest()
         empty_string_encoded = util.base64_encode(empty_string_hash)
 
         self.assertEqual(request_empty_header['oauth_body_hash'], empty_string_encoded)
@@ -179,8 +181,7 @@ class OAuthExtTest(unittest.TestCase):
     def extract_oauth_params(prepared_request: PreparedRequest):
         oauth_header = prepared_request.headers['Authorization']
         h = str(re.sub(r'^OAuth ', '', oauth_header))
-        res = dict([OAuthExtTest.to_pair(item) for item in h.split(',')])
-        return res
+        return dict([OAuthExtTest.to_pair(item) for item in h.split(',')])
 
 
 if __name__ == '__main__':

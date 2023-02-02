@@ -29,8 +29,7 @@ from OpenSSL import crypto
 
 
 def load_signing_key(pkcs12_filename, password):
-    private_key_file = open(pkcs12_filename, 'rb')
-    p12 = crypto.load_pkcs12(private_key_file.read(), password.encode("utf-8"))
-    private_key = p12.get_privatekey()
-    private_key_file.close()
+    with open(pkcs12_filename, 'rb') as private_key_file:
+        p12 = crypto.load_pkcs12(private_key_file.read(), password.encode("utf-8"))
+        private_key = p12.get_privatekey()
     return private_key

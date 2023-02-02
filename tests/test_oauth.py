@@ -111,11 +111,7 @@ class OAuthTest(unittest.TestCase):
         self.assertEqual(16, len(nonce))
 
     def test_nonce_uniqueness(self):
-        list_of_nonce = []
-
-        for _ in range(0, 100000):
-            list_of_nonce.append(util.get_nonce())
-
+        list_of_nonce = [util.get_nonce() for _ in range(100000)]
         counter = Counter(list_of_nonce)
         res = [k for k, v in counter.items() if v > 1]
 
